@@ -1,0 +1,431 @@
+/* ---- Reset e Configurações Globais ---- */
+:root {
+    --cor-primaria: #111111;
+    --cor-secundaria: #555555;
+    --cor-fundo: #f5f5f5;
+    --cor-fundo-card: #ffffff;
+    --cor-texto: #222222;
+    --cor-borda: #dddddd;
+    --cor-erro: #d90429;
+    --cor-sucesso: #008000;
+    
+    /* CORES DO TOGGLE (VERMELHO E VERDE) */
+    --toggle-off-bg: #dc3545; /* Vermelho (Calculadora) */
+    --toggle-on-bg: #198754; /* Verde (Aprendizado) */
+    
+    --toggle-handle-bg: #ffffff;
+    --toggle-handle-border: #cccccc;
+    
+    /* Cor de texto forçada para o Modo Aprendizado no fundo branco */
+    --cor-texto-escuro: #000000;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* ---- Layout Principal (Centralizado) ---- */
+header, main, footer {
+    width: 100%;
+    max-width: 900px;
+}
+
+header {
+    background-color: var(--cor-fundo-card);
+    color: var(--cor-texto);
+    padding: 20px;
+    /* Alteração para layout responsivo: Título e Toggle lado a lado no centro */
+    display: flex;
+    justify-content: space-between; /* Espaço entre o título e o toggle */
+    align-items: center; /* Alinha verticalmente */
+    text-align: left; /* Alinhamento do texto geral */
+    
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px 8px 0 0;
+    position: relative; /* Mantém a referência, mas não é usado para posicionar o toggle */
+}
+
+header h1 {
+    color: var(--cor-primaria);
+    margin: 0;
+    font-size: 1.5em; /* Ajusta o tamanho do título em mobile */
+    flex-shrink: 1; /* Permite que o título encolha se precisar */
+}
+
+/* Esconde o parágrafo no header em telas menores, se houver */
+header p {
+    display: none; 
+}
+
+
+footer {
+    text-align: center;
+    margin-top: 0;
+    padding: 20px;
+    font-size: 0.9em;
+    color: #777;
+    border: 1px solid var(--cor-borda);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+}
+
+/* ---- Estilos do Toggle Switch (Corrigido para evitar bug em mobile) ---- */
+.toggle-switch-container {
+    /* Removido position: absolute */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Garante que o container não force o layout */
+    flex-shrink: 0; 
+    margin-left: 20px; /* Adiciona um espaço para separar do título */
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    flex-shrink: 0; /* Garante que o switch não encolha */
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--toggle-off-bg); /* Vermelho */
+    transition: .4s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: var(--toggle-handle-bg);
+    border: 1px solid var(--toggle-handle-border);
+    transition: .4s;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.3);
+}
+input:checked + .slider {
+    background-color: var(--toggle-on-bg); /* Verde */
+}
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--toggle-on-bg);
+}
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+.slider.round {
+    border-radius: 34px;
+}
+.slider.round:before {
+    border-radius: 50%;
+}
+.mode-label {
+    font-weight: bold;
+    color: var(--cor-texto-escuro); 
+    font-size: 0.9em;
+    white-space: normal; /* Permite a quebra de linha se o texto for grande demais */
+    text-align: right;
+    flex-shrink: 1;
+}
+
+/* Mídia Query para garantir que em desktop o parágrafo do header apareça */
+@media (min-width: 600px) {
+    header p {
+        display: block; 
+        margin: 5px 0 0 0;
+    }
+    header {
+        flex-direction: column; /* Altera para empilhar no desktop */
+        justify-content: center;
+        text-align: center;
+    }
+    header h1 {
+        font-size: 2em;
+    }
+    .toggle-switch-container {
+        position: absolute; /* Volta ao posicionamento absoluto para desktop */
+        top: 20px;
+        right: 20px;
+        margin-left: 0;
+    }
+}
+
+
+/* ---- Lógica das Páginas Principais (Modo Calculadora vs Aprendizado) ---- */
+.mode-content {
+    display: none;
+}
+.mode-content.active {
+    display: block;
+}
+
+/* ---- NAVEGAÇÃO ÁLGEBRA/GEOMETRIA (dentro do modo Calculadora) ---- */
+.page-toggle-nav {
+    background-color: var(--cor-primaria);
+    padding: 10px;
+    text-align: center;
+    border-left: 1px solid var(--cor-borda);
+    border-right: 1px solid var(--cor-borda);
+}
+.page-toggle-nav button {
+    background-color: var(--cor-secundaria);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.page-toggle-nav button:hover {
+    background-color: #777;
+}
+
+/* ---- Lógica das Sub-Páginas (Álgebra vs Geometria) ---- */
+.page-content {
+    display: none;
+}
+.page-content.active {
+    display: block;
+}
+
+/* ---- Sub-navegação (dentro da pageAlgebra) ---- */
+.calculator-nav {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    background-color: var(--cor-fundo-card);
+    padding: 10px 10px 0 10px;
+    border-left: 1px solid var(--cor-borda);
+    border-right: 1px solid var(--cor-borda);
+    flex-wrap: wrap; /* Permite que os botões quebrem a linha */
+}
+.calculator-nav button {
+    background-color: #eee;
+    color: var(--cor-secundaria);
+    border: 1px solid var(--cor-borda);
+    padding: 8px 12px;
+    font-size: 0.9em;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+.calculator-nav button:hover {
+    background-color: #ddd;
+}
+.calculator-nav button.active {
+    background-color: var(--cor-primaria);
+    color: white;
+    border-color: var(--cor-primaria);
+}
+
+/* ---- Lógica dos Painéis da Sub-Nav ---- */
+.calculator-content {
+    display: none;
+}
+.calculator-content.active {
+    display: block;
+}
+
+/* ---- Estilo dos Cards ---- */
+.card {
+    background-color: var(--cor-fundo-card);
+    border: 1px solid var(--cor-borda);
+    border-top: none;
+    padding: 20px;
+    text-align: center;
+}
+#pageGeometria .card {
+    border-top: 1px solid var(--cor-borda);
+    border-radius: 0;
+}
+#learningModeContent .card {
+    border-top: 1px solid var(--cor-borda);
+    border-radius: 0;
+}
+.card h2 {
+    color: var(--cor-primaria);
+    margin-top: 0;
+    border-bottom: 2px solid var(--cor-primaria);
+    padding-bottom: 5px;
+    display: inline-block;
+}
+
+/* ---- Grids das Matrizes e Sistemas ---- */
+.matrix-grid, .system-grid {
+    display: grid;
+    gap: 10px;
+    margin: 20px auto;
+    max-width: 500px;
+}
+.grid-2x2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3x3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2x3 { grid-template-columns: repeat(3, 1fr); }
+.grid-3x4 { grid-template-columns: repeat(4, 1fr); }
+
+.grid-label {
+    font-weight: bold;
+    text-align: center;
+    color: var(--cor-secundaria);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---- Grid Pitágoras ---- */
+.pitagoras-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 15px;
+    max-width: 400px;
+    margin: 20px auto;
+    text-align: left;
+    align-items: center;
+}
+.pitagoras-grid label {
+    font-weight: bold;
+    text-align: right;
+}
+
+/* ---- Estilo dos Campos de Input ---- */
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    font-size: 1.1em;
+    text-align: center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+input[type="text"]:focus {
+    border-color: var(--cor-secundaria);
+    box-shadow: 0 0 5px rgba(0,0,0, 0.1);
+    outline: none;
+}
+.termos-independentes {
+    background-color: #f0f0f0;
+}
+
+/* ---- Estilo dos Botões (Dentro dos Cards) ---- */
+.card button {
+    background-color: var(--cor-primaria);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.card button:hover {
+    background-color: var(--cor-secundaria);
+}
+
+/* ---- Caixa de Resultado ---- */
+.result-box {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    font-size: 1.1em;
+    font-weight: bold;
+    min-height: 25px; 
+    text-align: center;
+}
+.success { color: var(--cor-sucesso); }
+.error { color: var(--cor-erro); }
+.info { color: var(--cor-primaria); }
+
+
+/* ---- ESTILOS NOVOS DO MODO APRENDIZADO (CONTRASTE E ESPAÇAMENTO CORRIGIDOS) ---- */
+.learning-card {
+    text-align: left;
+    line-height: 1.7; 
+    color: var(--cor-texto-escuro); 
+}
+
+/* Aumenta a separação entre as grandes seções */
+.learning-card h2, .learning-card h3 {
+    color: var(--cor-primaria); 
+    border-bottom: 2px solid var(--cor-secundaria);
+    padding-bottom: 5px;
+    margin-top: 35px; /* Mais margem em cima */
+    margin-bottom: 15px; /* Adiciona margem embaixo para separar do texto seguinte */
+}
+
+/* Garante o espaçamento dos subtítulos */
+.learning-card h4 {
+    color: var(--cor-secundaria);
+    margin-top: 25px; 
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+/* Garante o espaçamento entre parágrafos */
+.learning-card p {
+    color: var(--cor-texto-escuro); 
+    margin-top: 10px; /* Adiciona margem em cima */
+    margin-bottom: 15px; /* Garante espaçamento entre parágrafos */
+}
+
+/* Bloco de fórmula/exemplo - Ajusta o margin para ser mais robusto */
+.learning-card code {
+    display: block;
+    background-color: #f0f0f0; 
+    border: 1px solid var(--cor-borda);
+    border-left: 4px solid var(--cor-secundaria);
+    padding: 15px;
+    margin: 20px 0; /* Aumenta a margem vertical para separar bem */
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1em;
+    white-space: pre-wrap;
+    color: var(--cor-texto-escuro); 
+}
+
+/* Força o espaçamento vertical em listas (ul e ol) e lista de itens (li) */
+.learning-card ul, .learning-card ol {
+    margin: 15px 0 15px 20px; /* Margem vertical reforçada e indentação */
+    padding-left: 0; 
+    color: var(--cor-texto-escuro);
+}
+.learning-card ul {
+    list-style-type: disc;
+}
+.learning-card ol {
+    list-style-type: decimal;
+}
+
+.learning-card li {
+    color: var(--cor-texto-escuro);
+    margin-bottom: 8px; /* Espaço entre itens de lista */
+}
